@@ -1,39 +1,81 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Remote Assets Gen
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+A code generator for your remote assets stored in AWS S3. It's a modification of the great `flutter_gen` package to support fetching assets from a remote source instead of local project assets.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+This package generates type-safe classes for your assets, so you can use them in your Flutter app without using string paths.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+*   **Type safety:** No more typos in asset paths.
+*   **Remote assets:** Fetches assets directly from your AWS S3 bucket.
+*   **Supports:**
+    *   Images (png, jpg, jpeg, gif, webp, bmp, wbmp)
+    *   SVG files (via `flutter_svg`)
+    *   Lottie animations (via `lottie`)
+*   **Auto-generation:** Generates asset classes automatically when you run the build command.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add the package to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  # Your other dependencies
+  remote_assets_gen: <latest_version>
+
+dev_dependencies:
+  build_runner: <latest_version>
+  remote_assets_gen: <latest_version>
+```
+
+Then run `flutter pub get`.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Create a builder file (e.g., `tool/build.dart`) in your project's root directory:
 
 ```dart
-const like = 'sample';
+import 'package:remote_assets_gen/remote_assets_generator.dart';
+
+Future<void> main() async {
+  final generator = RemoteAssetsGenerator(
+    outputDir: "lib/gen/assets/", // [Optional]Y our desired output directory
+    awsRegion: "us-east-1", // Your AWS region
+    awsAccessKey: "YOUR_AWS_ACCESS_KEY", // IMPORTANT: Use a secure way to provide credentials
+    awsSecretKey: "YOUR_AWS_SECRET_KEY", // IMPORTANT: Use a secure way to provide credentials
+    awsBucketName: 'your-s3-bucket-name',
+    flutterSvgIntegration: true, // Set to true if you use SVGs
+    lottieIntegration: true, // Set to true if you use Lottie files
+  );
+
+  await generator.build();
+}
+```
+
+**IMPORTANT SECURITY NOTE:** Do not hardcode your AWS credentials directly in your source code, especially if you are committing it to a public repository. Consider using environment variables or a secrets management solution to handle your credentials securely.
+
+Then, run the builder to generate your asset classes:
+
+```shell
+dart run tool/build.dart
+```
+
+This will generate files in `lib/gen/assets/` (or your specified `outputDir`) which you can then use in your application.
+
+For example, if you have an image `logo.png` in your S3 bucket, you can use it like this:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:your_project/gen/assets/assets.gen.dart';
+
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Image.network(Assets.logo.url);
+  }
+}
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+This package is based on the great work of [flutter_gen](https://pub.dev/packages/flutter_gen). If you have any issues or feature requests, please file them on the project's GitHub repository.
