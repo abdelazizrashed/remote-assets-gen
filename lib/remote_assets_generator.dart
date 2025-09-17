@@ -72,7 +72,7 @@ class RemoteAssetsGenerator {
 
     final formatter = DartFormatter(
       languageVersion: DartFormatter.latestLanguageVersion,
-      // trailingCommas: config.formatterTrailingCommas,
+      trailingCommas: TrailingCommas.preserve,
       lineEnding: '\n',
     );
 
@@ -98,9 +98,31 @@ class RemoteAssetsGenerator {
         secretKey: awsSecretKey,
       ),
     );
-    final res = await api.listObjectsV2(bucket: awsBucketName);
-    final files = res.contents ?? [];
-    final filesPaths = files.map((f) => f.key!).toList();
+
+    final allContents = <Object>[];
+    String? continuationToken;
+    bool isTruncated;
+
+    log.info("Starting to fetch objects from bucket: $awsBucketName");
+
+    do {
+      final res = await api.listObjectsV2(
+        bucket: awsBucketName,
+        continuationToken: continuationToken,
+      );
+
+      if (res.contents != null) {
+        allContents.addAll(res.contents!);
+      }
+
+      isTruncated = res.isTruncated ?? false;
+      if (isTruncated) {
+        continuationToken = res.nextContinuationToken;
+        log.info("Fetching next page of objects...");
+      }
+    } while (isTruncated);
+
+    final filesPaths = allContents.map((f) => f.key!).toList();
     log.info("Found ${filesPaths.length} files.");
     String urlConstructor(String path) =>
         'https://$awsBucketName.s3.$awsRegion.amazonaws.com/$path';
