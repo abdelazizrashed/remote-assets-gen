@@ -101,6 +101,7 @@ class RemoteAssetsGenerator {
     final res = await api.listObjectsV2(bucket: awsBucketName);
     final files = res.contents ?? [];
     final filesPaths = files.map((f) => f.key!).toList();
+    log.info("Found ${filesPaths.length} files.");
     String urlConstructor(String path) =>
         'https://$awsBucketName.s3.$awsRegion.amazonaws.com/$path';
 
