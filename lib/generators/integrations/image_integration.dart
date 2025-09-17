@@ -13,10 +13,10 @@ class ImageIntegration extends Integration {
 
   @override
   List<Import> get requiredImports => const [
-    Import('dart:io'),
-    Import('package:flutter/material.dart'),
-    Import("package:flutter_cache_manager/flutter_cache_manager.dart"),
-  ];
+        Import('dart:io'),
+        Import('package:flutter/material.dart'),
+        Import("package:flutter_cache_manager/flutter_cache_manager.dart"),
+      ];
 
   @override
   String get classOutput => _classDefinition;
@@ -100,7 +100,7 @@ class RemoteAssetGenImage extends RemoteAssetProvider {
         } else if (progressIndicatorBuilder != null) {
           return progressIndicatorBuilder(context, _assetUrl);
         } else {
-          return Container(width: width, height: height, color: Colors.grey);
+          return SizedBox(width: width, height: height);
         }
       },
     );

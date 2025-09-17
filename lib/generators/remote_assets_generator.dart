@@ -45,7 +45,10 @@ Future<String> generateAssets(
     classesBuffer.writeln(integration.classOutput);
   }
   if (integrations.isNotEmpty) {
-    classesBuffer.writeln(Integration.requiredHelperClasses);
+    classesBuffer.writeln(Integration.requiredHelperClasses(
+      maxNrOfCacheObjects: generator.maxNrOfCacheObjects,
+      stalePeriodInDays: generator.stalePeriodInDays,
+    ));
   }
 
   final importsBuffer = StringBuffer();
@@ -81,8 +84,7 @@ Future<String> _dotDelimiterStyleDefinition(
     String assetPath = join(rootPath, assetType.path);
     final isDirectory = !assetType.path.contains(".");
 
-    final isRootAsset =
-        !isDirectory &&
+    final isRootAsset = !isDirectory &&
         File(assetPath).parent.absolute.uri.toFilePath() == rootPath;
     // Handles directories, and explicitly handles root path assets.
     if (isDirectory || isRootAsset) {
@@ -147,9 +149,8 @@ String _dotDelimiterStyleAssetsClassDefinition(
   List<_Statement> statements,
   String? packageName,
 ) {
-  final statementsBlock = statements
-      .map((statement) => statement.toStaticFieldString())
-      .join('\n');
+  final statementsBlock =
+      statements.map((statement) => statement.toStaticFieldString()).join('\n');
   final valuesBlock = _assetValuesDefinition(statements, static: true);
 
   return _assetsStaticClassDefinition(
@@ -355,16 +356,14 @@ String _directoryClassGenDefinition(
   List<_Statement> statements,
   String? directoryPath,
 ) {
-  final statementsBlock = statements
-      .map((statement) {
-        final buffer = StringBuffer();
-        if (statement.needDartDoc) {
-          buffer.writeln(statement.toDartDocString());
-        }
-        buffer.writeln(statement.toGetterString());
-        return buffer.toString();
-      })
-      .join('\n');
+  final statementsBlock = statements.map((statement) {
+    final buffer = StringBuffer();
+    if (statement.needDartDoc) {
+      buffer.writeln(statement.toDartDocString());
+    }
+    buffer.writeln(statement.toGetterString());
+    return buffer.toString();
+  }).join('\n');
   final pathBlock = directoryPath != null
       ? '''
   /// Directory path: $directoryPath

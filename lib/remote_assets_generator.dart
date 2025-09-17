@@ -18,6 +18,9 @@ class RemoteAssetsGenerator {
   final bool imageIntegration;
   final bool flutterSvgIntegration;
   final bool lottieIntegration;
+  final int maxNrOfCacheObjects;
+  final int stalePeriodInDays;
+
   RemoteAssetsGenerator({
     this.outputDir = "lib/gen/",
     this.className = "Assets",
@@ -29,6 +32,8 @@ class RemoteAssetsGenerator {
     this.imageIntegration = true,
     this.flutterSvgIntegration = false,
     this.lottieIntegration = false,
+    this.maxNrOfCacheObjects = 5000,
+    this.stalePeriodInDays = 30,
   });
 
   Future<void> build() async {

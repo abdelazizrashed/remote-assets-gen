@@ -26,9 +26,9 @@ class LottieIntegration extends Integration {
 
   @override
   List<Import> get requiredImports => const [
-    Import('package:flutter/widgets.dart'),
-    Import('package:lottie/lottie.dart', alias: '_lottie'),
-  ];
+        Import('package:flutter/widgets.dart'),
+        Import('package:lottie/lottie.dart', alias: '_lottie'),
+      ];
 
   @override
   String get classOutput => _classDefinition;
@@ -111,7 +111,7 @@ class RemoteLottieGenImage extends RemoteAssetProvider {
         } else if (progressIndicatorBuilder != null) {
           return progressIndicatorBuilder(context, _assetUrl);
         } else {
-          return Container(width: width, height: height, color: Colors.grey);
+          return SizedBox(width: width, height: height);
         }
       },
     );
@@ -130,7 +130,8 @@ class RemoteLottieGenImage extends RemoteAssetProvider {
   Future<bool> isSupport(
     AssetType asset,
     String Function(String) urlConstructor,
-  ) async => await isLottieFile(asset, urlConstructor);
+  ) async =>
+      await isLottieFile(asset, urlConstructor);
 
   @override
   bool get isConstConstructor => true;

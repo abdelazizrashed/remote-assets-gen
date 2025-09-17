@@ -7,11 +7,11 @@ class SvgIntegration extends Integration {
 
   @override
   List<Import> get requiredImports => const [
-    Import('package:flutter/widgets.dart'),
-    Import('package:flutter/services.dart'),
-    Import('package:flutter_svg/flutter_svg.dart', alias: '_svg'),
-    Import('package:vector_graphics/vector_graphics.dart', alias: '_vg'),
-  ];
+        Import('package:flutter/widgets.dart'),
+        Import('package:flutter/services.dart'),
+        Import('package:flutter_svg/flutter_svg.dart', alias: '_svg'),
+        Import('package:vector_graphics/vector_graphics.dart', alias: '_vg'),
+      ];
 
   @override
   String get classOutput => _classDefinition;
@@ -99,7 +99,7 @@ class RemoteSvgGenImage extends RemoteAssetProvider {
         } else if (progressIndicatorBuilder != null) {
           return progressIndicatorBuilder(context, _assetUrl);
         } else {
-          return Container(width: width, height: height, color: Colors.grey);
+          return SizedBox(width: width, height: height);
         }
       },
     );

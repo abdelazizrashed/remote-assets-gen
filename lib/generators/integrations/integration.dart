@@ -33,7 +33,11 @@ abstract class Integration {
     return buffer.toString();
   }
 
-  static String get requiredHelperClasses => r"""
+  static String requiredHelperClasses({
+    int maxNrOfCacheObjects = 5000,
+    int stalePeriodInDays = 30,
+  }) =>
+      """
 class RemoteAssetProvider {
   final String _assetUrl;
 
@@ -50,8 +54,8 @@ class _RemoteAssetCacheManager {
   static CacheManager instance = CacheManager(
     Config(
       key,
-      stalePeriod: const Duration(days: 30),
-      maxNrOfCacheObjects: 5000,
+      stalePeriod: const Duration(days: $stalePeriodInDays),
+      maxNrOfCacheObjects: $maxNrOfCacheObjects,
       repo: JsonCacheInfoRepository(databaseName: key),
       fileSystem: IOFileSystem(key),
       fileService: HttpFileService(),
